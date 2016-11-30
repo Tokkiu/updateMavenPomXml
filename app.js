@@ -1,7 +1,7 @@
-
+var config = require("./src/config.js");
 var parser = require("xml2json");
 var fs = require("fs");
-var file = fs.readFileSync("pom.xml","utf-8");
+var file = fs.readFileSync(config.from,"utf-8");
 var search = require("./src/service.js");
 var fliter = require("./src/fliter.js");
 var json2xml = require("json2xml");
@@ -63,10 +63,8 @@ var statusList = [
 // do next update 
 function doNext(){
     if(allUpdated){
-        console.log("into allUpdated")
-        // var updatedXml = parser.toXml(data);
         var updatedXml = json2xml(data,{header:true});
-        fs.writeFile('./t2.xml',updatedXml,function(err){
+        fs.writeFile(config.target,updatedXml,function(err){
             if(err) throw err;
             console.log("finished");
         })
@@ -76,6 +74,7 @@ function doNext(){
     var a = nextInfo.a;
     var g = nextInfo.g;
     var v = nextInfo.v;
+    var vK = nextInfo.vK;
     var newV = v;
      if(v !== undefined){
         search.search({
@@ -84,9 +83,9 @@ function doNext(){
         },function(res){
             newV = res;
             var tmp = newV;
-            res!=="none"?newV = fliter.fliter(newV,v,1):newV = v;
+            res!=="none"?newV = fliter.fliter(newV,v,config.option):newV = v;
             // update the version
-            data.project.properties[a+".version"] = newV;
+            data.project.properties[vK] = newV;
             console.log("name: "+a)
             console.log("P : "+v+"| N : "+tmp+" | F : "+newV);
             doNext();
@@ -110,31 +109,37 @@ function getNextInfo(){
                 case "Management_dependencies":
                     info.g = Management_dependencies[statusList[len].index].groupId;
                     info.a = Management_dependencies[statusList[len].index].artifactId;
+                    info.vK = Management_dependencies[statusList[len].index].version.slice(2,-1);
                     info.v = versions[Management_dependencies[statusList[len].index].version.slice(2,-1)];
                     break;
                 case "dependencies":
                     info.g = dependencies.groupId;
                     info.a = dependencies.artifactId;
+                    info.vK = dependencies.version.slice(2,-1);
                     info.v = versions[dependencies.version.slice(2,-1)];
                     break;
                 case "build_extensions":
                     info.g = build.extensions.extension.groupId;
                     info.a = build.extensions.extension.artifactId;
+                    info.vK = build.extensions.extension.version.slice(2,-1);
                     info.v = versions[build.extensions.extension.version.slice(2,-1)];
                     break;
                 case "build_pluginManagement":
                     info.g = build.pluginManagement.plugins.plugin[statusList[len].index].groupId;
                     info.a = build.pluginManagement.plugins.plugin[statusList[len].index].artifactId;
+                    info.vK = build.pluginManagement.plugins.plugin[statusList[len].index].version.slice(2,-1);
                     info.v = versions[build.pluginManagement.plugins.plugin[statusList[len].index].version.slice(2,-1)];
                     break;
                 case "build_plugins":
                     info.g = build.plugins.plugin[statusList[len].index].groupId;
                     info.a = build.plugins.plugin[statusList[len].index].artifactId;
+                    info.vK = build.plugins.plugin[statusList[len].index].version.slice(2,-1);
                     info.v = versions[build.plugins.plugin[statusList[len].index].version.slice(2,-1)];
                     break;
                 case "reporting":
                     info.g = reporting[statusList[len].index].groupId;
                     info.a = reporting[statusList[len].index].artifactId;
+                    info.vK = reporting[statusList[len].index].version.slice(2,-1);
                     info.v = versions[reporting[statusList[len].index].version.slice(2,-1)];
                     break;
             }
