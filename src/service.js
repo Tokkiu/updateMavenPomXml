@@ -28,5 +28,8 @@ function getResult(param,callback){
         });
     });
 }
-// getResult("junit","junit");
+getResult({
+    dependencyName:"junit",
+    groupId:"junit"
+},function(res){console.log(res)});
 exports.search = getResult;

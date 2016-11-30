@@ -6,6 +6,7 @@ var search = require("./src/service.js");
 var fliter = require("./src/fliter.js");
 var json2xml = require("json2xml");
 
+
 // memory vars 
 var data = parser.toJson(file,{object: true});
 var versions = data.project.properties;
@@ -22,13 +23,50 @@ var allUpdated = false;
 console.log("begin:*******************************************************");
 
 
+// //store status for update
+var statusList = [
+    {
+        name : "Management_dependencies",
+        status : false,
+        index : 0,
+        max : Management_dependencies.length,
+    },
+    {
+        name : "dependencies",
+        status : false,
+        index : 0,
+        max : 1,
+    },{
+        name : "build_extensions",
+        status : false,
+        index : 0,
+        max : 1,
+    },{
+        name : "build_pluginManagement",
+        status : false,
+        index : 0,
+        max : build.pluginManagement.plugins.plugin.length,
+    },{
+        name : "build_plugins",
+        status : false,
+        index : 0,
+        max : build.plugins.plugin.length,
+    },{
+        name : "reporting",
+        status : false,
+        index : 0,
+        max : reporting.length,
+    }
+    ]; 
+
+
 // do next update 
 function doNext(){
     if(allUpdated){
         console.log("into allUpdated")
         // var updatedXml = parser.toXml(data);
         var updatedXml = json2xml(data,{header:true});
-        fs.writeFile('./t.xml',updatedXml,function(err){
+        fs.writeFile('./t2.xml',updatedXml,function(err){
             if(err) throw err;
             console.log("finished");
         })
@@ -110,41 +148,4 @@ function getNextInfo(){
     return info;
 }
 
-
-//store status for update
-var statusList = [
-    {
-        name : "Management_dependencies",
-        status : false,
-        index : 0,
-        max : Management_dependencies.length,
-    },
-    {
-        name : "dependencies",
-        status : false,
-        index : 0,
-        max : 1,
-    },{
-        name : "build_extensions",
-        status : false,
-        index : 0,
-        max : 1,
-    },{
-        name : "build_pluginManagement",
-        status : false,
-        index : 0,
-        max : build.pluginManagement.plugins.plugin.length,
-    },{
-        name : "build_plugins",
-        status : false,
-        index : 0,
-        max : build.plugins.plugin.length,
-    },{
-        name : "reporting",
-        status : false,
-        index : 0,
-        max : reporting.length,
-    }
-    ];
 doNext();
-    
