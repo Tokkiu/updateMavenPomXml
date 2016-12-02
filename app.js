@@ -10,10 +10,16 @@ var json2xml = require("json2xml");
 // memory vars 
 var data = parser.toJson(file,{object: true});
 var versions = data.project.properties;
-var Management_dependencies = data.project.dependencyManagement.dependencies.dependency;
-var dependencies = data.project.dependencies.dependency;
+// dojoyn
+// var Management_dependencies = data.project.dependencyManagement.dependencies.dependency;
+// var dependencies = data.project.dependencies.dependency;
+// var reporting = data.project.reporting.plugins.plugin;
+
+//yangtzi
+var yang_dependencies = data.project.dependencies.dependency;
+var yang_reporting = data.project.reporting.plugins.plugin;
+
 var build = data.project.build;
-var reporting = data.project.reporting.plugins.plugin;
 var allUpdated = false;
 
 
@@ -26,17 +32,6 @@ console.log("begin:*******************************************************");
 // //store status for update
 var statusList = [
     {
-        name : "Management_dependencies",
-        status : false,
-        index : 0,
-        max : Management_dependencies.length,
-    },
-    {
-        name : "dependencies",
-        status : false,
-        index : 0,
-        max : 1,
-    },{
         name : "build_extensions",
         status : false,
         index : 0,
@@ -45,17 +40,43 @@ var statusList = [
         name : "build_pluginManagement",
         status : false,
         index : 0,
-        max : build.pluginManagement.plugins.plugin.length,
+        max : build.pluginManagement.plugins.plugin.length||1,
     },{
         name : "build_plugins",
         status : false,
         index : 0,
-        max : build.plugins.plugin.length,
-    },{
-        name : "reporting",
+        max : build.plugins.plugin.length||1,
+    },
+      // dojoyn pom.xml
+    // {
+    //     name : "Management_dependencies",
+    //     status : false,
+    //     index : 0,
+    //     max : Management_dependencies.length,
+    // },
+    // {
+    //     name : "dependencies",
+    //     status : false,
+    //     index : 0,
+    //     max : 1,
+    // },{
+    //     name : "reporting",
+    //     status : false,
+    //     index : 0,
+    //     max : reporting.length||1,
+    // },
+
+    // yangtzi
+    {
+        name : "yang-dependencies",
         status : false,
         index : 0,
-        max : reporting.length,
+        max : yang_dependencies.length||1,
+    },{
+        name : "yang-reporting",
+        status : false,
+        index : 0,
+        max : 1,
     }
     ]; 
 
@@ -141,6 +162,18 @@ function getNextInfo(){
                     info.a = reporting[statusList[len].index].artifactId;
                     info.vK = reporting[statusList[len].index].version.slice(2,-1);
                     info.v = versions[reporting[statusList[len].index].version.slice(2,-1)];
+                    break;
+                case "yang-dependencies":
+                    info.g = yang_dependencies[statusList[len].index].groupId;
+                    info.a = yang_dependencies[statusList[len].index].artifactId;
+                    info.vK = yang_dependencies[statusList[len].index].version.slice(2,-1);
+                    info.v = versions[yang_dependencies[statusList[len].index].version.slice(2,-1)];
+                    break;
+                case "yang-reporting":
+                    info.g = yang_reporting.groupId;
+                    info.a = yang_reporting.artifactId;
+                    info.vK = yang_reporting.version.slice(2,-1);
+                    info.v = versions[yang_reporting.version.slice(2,-1)];
                     break;
             }
             statusList[len].index++;

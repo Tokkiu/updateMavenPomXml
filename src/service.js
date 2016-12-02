@@ -29,3 +29,11 @@ function getResult(param,callback){
     });
 }
 exports.search = getResult;
+getResult({
+    dependencyName:
+    "maven-checkstyle-plugin",
+    groupId:
+    "org.apache.maven.plugins"
+},function(res){
+    console.log(res)
+});
